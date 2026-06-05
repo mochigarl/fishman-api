@@ -16,7 +16,24 @@ const locationRoutes = require("./routes/locationRoutes")
 
 const app = express()
 
-app.use(cors())
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://fishman.com",
+  "https://www.fishman.com"
+]
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true)
+      }
+      return callback(null, true)
+    },
+    credentials: true
+  })
+)
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -34,11 +51,11 @@ app.use("/api/weather-tide", weatherTideRoutes)
 app.use("/api/location", locationRoutes)
 
 app.get("/", (req, res) => {
-  res.send("FishMan API running")
+  res.status(200).send("FishMan API running")
 })
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`)
 })
